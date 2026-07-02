@@ -176,8 +176,8 @@ function initQuoteTool() {
       await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ data: JSON.stringify(payload) }).toString()
       });
 
       form.classList.add('hidden');
@@ -309,10 +309,9 @@ function initContactForm() {
       await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ data: JSON.stringify(payload) }).toString()
       });
-
       statusEl.textContent = "Thanks! Your message has been sent — we'll be in touch soon.";
       statusEl.className = 'text-sm mt-4 text-center text-meangreen-700 font-semibold';
       statusEl.classList.remove('hidden');
