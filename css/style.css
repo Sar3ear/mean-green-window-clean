@@ -1,0 +1,215 @@
+/* ===================== Base ===================== */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===================== Service Cards ===================== */
+.service-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: visible;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -15px rgba(15, 143, 63, 0.25);
+}
+
+/* ===================== Review Cards ===================== */
+.review-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  padding: 2rem;
+}
+
+/* ===================== Form Inputs ===================== */
+.form-input {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1bb04f;
+  box-shadow: 0 0 0 3px rgba(27, 176, 79, 0.15);
+}
+
+/* ===================== Option Cards (Quote Tool) ===================== */
+.option-card {
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+.option-card input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.option-card-body {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.9rem;
+  padding: 1rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.option-card-body i {
+  font-size: 1.15rem;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.option-card-body em {
+  display: block;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: #16a34a;
+  margin-top: 2px;
+}
+
+.option-card input:checked + .option-card-body {
+  border-color: #1bb04f;
+  background: #eefdf3;
+  color: #0d7135;
+}
+
+.option-card input:checked + .option-card-body i {
+  color: #1bb04f;
+}
+
+.option-card:hover .option-card-body {
+  border-color: #75e498;
+}
+
+/* ===================== Quote Progress ===================== */
+#quote-progress {
+  gap: 0;
+}
+
+.quote-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.quote-step-dot span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.quote-step-dot small {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .quote-step-dot small {
+    display: block;
+  }
+}
+
+.quote-step-dot.active span,
+.quote-step-dot.completed span {
+  background: #1bb04f;
+  color: white;
+}
+
+.quote-step-dot.active small,
+.quote-step-dot.completed small {
+  color: #0f8f3f;
+}
+
+.quote-step-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 6px;
+  align-self: center;
+  margin-bottom: 18px;
+}
+
+/* ===================== Misc ===================== */
+#sticky-cta {
+  animation: pulse-cta 2.4s infinite;
+}
+
+@keyframes pulse-cta {
+  0%, 100% { box-shadow: 0 10px 25px -8px rgba(27, 176, 79, 0.6); }
+  50% { box-shadow: 0 10px 35px -4px rgba(27, 176, 79, 0.85); }
+}
+
+::selection {
+  background: #1bb04f;
+  color: #fff;
+}
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1bb04f;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1bb04f;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
