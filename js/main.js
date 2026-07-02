@@ -4,8 +4,6 @@
 // to a Google Sheet via a Google Apps Script web app.
 // =====================================================
 
-// Paste your Google Apps Script Web App URL here after deploying
-// (see SETUP.md for step-by-step instructions).
 const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxyAPXpZcu4Pq4sH0vnxbtyaZPULLxQNtyuyOcGTAfaSEbHJvoWR8x2TM8T03WUSAhh/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -69,7 +67,6 @@ function initQuoteTool() {
   let currentStep = 1;
   const totalSteps = steps.length;
 
-  // Live label for window count slider
   if (windowsRange && windowsLabel) {
     windowsRange.addEventListener('input', () => {
       windowsLabel.textContent = windowsRange.value;
@@ -140,10 +137,9 @@ function initQuoteTool() {
     e.preventDefault();
     if (!validateStep(currentStep)) return;
 
-    const submitButtonEl = submitBtn;
-    const originalHTML = submitButtonEl.innerHTML;
-    submitButtonEl.disabled = true;
-    submitButtonEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Calculating...';
+    const originalHTML = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Calculating...';
     errorBox.classList.add('hidden');
 
     try {
@@ -165,12 +161,10 @@ function initQuoteTool() {
         address: formData.get('address') || ''
       };
 
-      // Simulate brief "AI thinking" delay for perceived intelligence
       await new Promise(resolve => setTimeout(resolve, 900));
 
       const estimate = isCustomHeight ? null : calculateEstimate(data);
 
-      // Persist lead to the Sheet either way — 4+ story jobs still count as a real lead
       const payload = {
         ...data,
         estimated_low: estimate ? estimate.low : '',
@@ -179,16 +173,12 @@ function initQuoteTool() {
         source: isCustomHeight ? 'AI Quote Tool - Custom (4+ stories)' : 'AI Quote Tool'
       };
 
-      const response = await fetch(GOOGLE_SHEETS_URL, {
+      await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error('Failed to save your quote request. Please try again.');
-      }
 
       form.classList.add('hidden');
       document.getElementById('quote-progress').classList.add('hidden');
@@ -205,40 +195,26 @@ function initQuoteTool() {
       errorBox.textContent = err.message || 'Something went wrong generating your quote. Please try again or call us directly.';
       errorBox.classList.remove('hidden');
     } finally {
-      submitButtonEl.disabled = false;
-      submitButtonEl.innerHTML = originalHTML;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalHTML;
     }
   });
 
   showStep(currentStep);
 }
 
-/**
- * Client-side "AI-style" pricing engine.
- * Simulates a smart estimate based on weighted factors:
- * window count, stories, service type, frequency discounts, and extras.
- *
- * Rate logic:
- * - Commercial starts cheaper per pane (bulk, often simpler storefront glass)
- *   to match the site's "From $2/pane" pricing card.
- * - Residential starts higher per window but scales more gently with height,
- *   matching "Up to 15 windows, exterior only — From $99."
- * - Commercial scales MUCH more steeply with story count and full interior+
- *   exterior service, since multi-story commercial jobs realistically need
- *   lifts/scaffolding, insurance paperwork, and after-hours scheduling —
- *   costs a simple per-window rate doesn't capture on its own.
- */
+/* ---------------------------------------------------
+   Pricing Engine
+--------------------------------------------------- */
 function calculateEstimate(data) {
   const isCommercial = data.property_type === 'Commercial';
 
   const BASE_PER_WINDOW = isCommercial ? 2.0 : 6.6;
   let subtotal = data.num_windows * BASE_PER_WINDOW;
 
-  // Minimum service charge (commercial carries higher admin/insurance overhead)
   const MIN_CHARGE = isCommercial ? 125 : 99;
   subtotal = Math.max(subtotal, MIN_CHARGE);
 
-  // Service type multiplier
   const serviceMultiplier = {
     'Exterior Only': 1,
     'Interior Only': 0.9,
@@ -246,14 +222,11 @@ function calculateEstimate(data) {
   }[data.service_type] || 1;
   subtotal *= serviceMultiplier;
 
-  // Story multiplier (commercial needs lifts/scaffolding above ground level,
-  // so it climbs much faster than a residential extension pole/ladder job)
   const storyMultiplier = isCommercial
     ? { 1: 1, 2: 1.35, 3: 1.75, 4: 2.25 }[data.stories] || 1.35
     : { 1: 1, 2: 1.15, 3: 1.35, 4: 1.55 }[data.stories] || 1.15;
   subtotal *= storyMultiplier;
 
-  // Extras add-on pricing
   const perWindowExtras = { 'Screens': 1.25, 'Tracks & Sills': 0.70 };
   const flatExtras = isCommercial
     ? { 'Gutter Cleaning': 175, 'Solar Panels': 299 }
@@ -269,7 +242,6 @@ function calculateEstimate(data) {
   });
   subtotal += extrasCost;
 
-  // Frequency discount (recurring plans — matches "Save up to 20%" promise)
   const frequencyDiscount = {
     'One-time': 0,
     'Monthly': 0.20,
@@ -278,7 +250,6 @@ function calculateEstimate(data) {
   }[data.frequency] || 0;
   subtotal *= (1 - frequencyDiscount);
 
-  // Create a competitive range (+/- ~12%) around the calculated estimate
   const low = Math.round((subtotal * 0.9) / 5) * 5;
   const high = Math.round((subtotal * 1.12) / 5) * 5;
 
@@ -335,19 +306,18 @@ function initContactForm() {
         source: 'Contact Form'
       };
 
-      const response = await fetch(GOOGLE_SHEETS_URL, {
+      await fetch(GOOGLE_SHEETS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-
-      const result = await response.json();
-      if (!result.success) throw new Error('Could not send message. Please try again.');
 
       statusEl.textContent = "Thanks! Your message has been sent — we'll be in touch soon.";
       statusEl.className = 'text-sm mt-4 text-center text-meangreen-700 font-semibold';
       statusEl.classList.remove('hidden');
       form.reset();
+
     } catch (err) {
       console.error(err);
       statusEl.textContent = err.message || 'Something went wrong. Please try again.';
