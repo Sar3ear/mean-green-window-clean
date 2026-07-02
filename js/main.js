@@ -6,7 +6,7 @@
 
 // Paste your Google Apps Script Web App URL here after deploying
 // (see SETUP.md for step-by-step instructions).
-const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyRZcy2SUweBR8a43zhDONPzKx2tu0chiipL8SfAlqgIE1VPtXwoynemLJxGjubCWN6/exec';
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxyAPXpZcu4Pq4sH0vnxbtyaZPULLxQNtyuyOcGTAfaSEbHJvoWR8x2TM8T03WUSAhh/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
